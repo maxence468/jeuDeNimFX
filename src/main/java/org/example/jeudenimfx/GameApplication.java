@@ -3,6 +3,7 @@ package org.example.jeudenimfx;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -42,6 +43,8 @@ public class GameApplication extends Application {
         Label lblFeedback  = new Label();
         //Bouton pour rejouer
         Button btnRejouer = new Button("Rejouer");
+        //image de l'icon
+        Image icon = new Image("/nim.png");
 
         //boite Colonne verticale avec 8 d'espace
         VBox layout = new VBox(8);
@@ -58,7 +61,10 @@ public class GameApplication extends Application {
 
         // 3. Attachement de la Scene au Stage
         stage.setScene(scene);
-
+        //mettre une icone
+        stage.getIcons().add(icon);
+        //mettre le titre de la fenetre
+        stage.setTitle("Jeu de Nim");
         //Affichage de la scene de theatre
         stage.show();
 
