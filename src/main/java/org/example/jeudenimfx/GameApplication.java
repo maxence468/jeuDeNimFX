@@ -156,29 +156,22 @@ public class GameApplication extends Application {
         });
 
         btnValider.setOnAction( e -> {
-            //si on a coché l'ia et que c'est son tour
-            if(ia.isSelected() && ((joueur[nbTour % 2]) == 1)){
-                System.out.println("tour de l'ia");
-                choix = 3;
-                btnValider.arm();
-            }
-            else{
-                //on verifie que le joueur a rempli le textField
-                if(reponse.getText().isEmpty()){
-                    choix = 0;
-                }
-                //le joueur a rentré quelque chose
-                else{
-                    //on recupere le choix du joueur et le converti en int
-                    try {
-                        choix = Integer.parseInt(reponse.getText());
-                        reponse.clear();
-                    }
-                    catch(Exception _) {
-                    }
-                }
 
+            //on verifie que le joueur a rempli le textField
+            if(reponse.getText().isEmpty()){
+                choix = 0;
             }
+            //le joueur a rentré quelque chose
+            else{
+                //on recupere le choix du joueur et le converti en int
+                try {
+                    choix = Integer.parseInt(reponse.getText());
+                    reponse.clear();
+                }
+                catch(Exception _) {
+                }
+            }
+
             //Verification du choix
             if(choix <= 0 || choix > MAX_RETRAIT){
                 lblFeedback.setText("Il faut choisir un nombre entre 1 et 3");
@@ -194,6 +187,7 @@ public class GameApplication extends Application {
                 lblFeedback.setText(joueurs.get(Integer.toString(joueur[nbTour % 2])) +" enleve "+ choix +" allumettes");
                 //on remet le choix à 0
                 choix = 0;
+
 
 
                 //affichage du nombre d'allumette
