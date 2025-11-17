@@ -1,5 +1,4 @@
 package org.example.jeudenimfx;
-
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -7,15 +6,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
-
 import static javafx.geometry.Pos.*;
 
 
@@ -34,8 +29,6 @@ public class GameApplication extends Application {
 
     //hashmap pour associer les noms avec les numeros des joueurs
     Map<String, String> joueurs = new HashMap<String,String>();
-    String nom1;
-    String nom2;
 
     //nombre de tour dans le jeu
     int nbTour = 0;
@@ -55,6 +48,7 @@ public class GameApplication extends Application {
 
         //Champ input
         TextField reponse = new TextField();
+        reponse.setMaxWidth(100);
 
         //boutton validation de la saisie
         Button btnValider = new Button("retirer");
@@ -77,16 +71,19 @@ public class GameApplication extends Application {
 
         Image image = new Image("/image.png");
         ImageView imageView = new ImageView(image);
-        imageView.setFitHeight(200);
-        imageView.setFitWidth(200);
+        imageView.setFitHeight(100);
+        imageView.setFitWidth(500);
 
         //retour utilisateur si le nom est mal rempli
         Label retourNom = new Label();
         //champs pour choisir le nom des joueurs
         TextField choixNom1 = new TextField();
+        //largeur max
+        choixNom1.setMaxWidth(250);
         //on met un placeholder
         choixNom1.setPromptText("Nom du joueur 1");
         TextField choixNom2 = new TextField();
+        choixNom2.setMaxWidth(250);
         choixNom2.setPromptText("Nom du joueur 2");
         //pour lancer une partie une fois qu'on a choisi les noms
         Button btnLancer = new Button("Lancer la partie");
@@ -125,7 +122,7 @@ public class GameApplication extends Application {
             else if(choixNom2.getText().isEmpty()){
                 retourNom.setText("c'est mieux d'avoir un nom pour le joueur 2");
             }
-            //nom valide 
+            //nom valide
             else{
                 //on met le nom associé à son numero de joueur
                 joueurs.put("1", choixNom1.getText());
