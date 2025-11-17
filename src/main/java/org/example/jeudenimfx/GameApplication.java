@@ -4,6 +4,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -84,15 +85,22 @@ public class GameApplication extends Application {
         choixNom1.setPromptText("Nom du joueur 1");
         TextField choixNom2 = new TextField();
         choixNom2.setMaxWidth(250);
+        choixNom2.setMinWidth(250);
         choixNom2.setPromptText("Nom du joueur 2");
         //pour lancer une partie une fois qu'on a choisi les noms
         Button btnLancer = new Button("Lancer la partie");
 
+        //choix pour jouer avec un ia ou non
+        CheckBox ia = new CheckBox("IA ?");
+        //layout horizontal avec le nom du joueur 2 et la checkbox pour l'ia
+        HBox joueur2 = new HBox();
+        joueur2.getChildren().addAll(choixNom2, ia);
+        joueur2.setAlignment(CENTER);
 
         //boite Colonne verticale avec 8 d'espace
         VBox layout = new VBox(8);
         //Ajout des composants dans la boite verticale
-        layout.getChildren().addAll(retourNom, choixNom1, choixNom2, btnLancer, imageView, inviteDeSaisie,lblFeedback,reponse,btnValider,lblStatutPile,btnRejouer);
+        layout.getChildren().addAll(retourNom, choixNom1, joueur2, btnLancer, imageView, inviteDeSaisie,lblFeedback,reponse,btnValider,lblStatutPile,btnRejouer);
         btnRejouer.setVisible(false);
         inviteDeSaisie.setVisible(false);
         reponse.setVisible(false);
@@ -124,47 +132,55 @@ public class GameApplication extends Application {
             }
             //nom valide
             else{
-                //on met le nom associé à son numero de joueur
-                joueurs.put("1", choixNom1.getText());
-                joueurs.put("2", choixNom2.getText());
+                if(ia.isSelected()){
+                    joueurs.put("1", choixNom1.getText());
+                    //ia a un nom predefini
+                    joueurs.put("2", "IA TROP FORTE");
+                }
+                else{
+                    //on met le nom associé à son numero de joueur
+                    joueurs.put("1", choixNom1.getText());
+                    joueurs.put("2", choixNom2.getText());
+                }
                 //on met visible la suite du jeu
                 inviteDeSaisie.setVisible(true);
                 reponse.setVisible(true);
                 btnValider.setVisible(true);
 
                 //on enleve le choix du nom et le bouton
-                layout.getChildren().removeAll(retourNom,choixNom1,choixNom2, btnLancer);
+                layout.getChildren().removeAll(retourNom,choixNom1,joueur2, btnLancer);
 
                 //on met le texte de depart avec le nom du joueur 1
-                inviteDeSaisie.setText("Joueur "+ joueurs.get(Integer.toString(joueur[nbTour])) + " Combien d'allumette veux-tu enlever ?");
+                inviteDeSaisie.setText(joueurs.get(Integer.toString(joueur[nbTour])) + ", Combien d'allumette veux-tu enlever ?");
             }
         });
 
         btnValider.setOnAction( e -> {
-
-            //on verifie que le joueur a rempli le textField
-            if(reponse.getText().isEmpty()){
-                choix = 0;
+            //si on a coché l'ia et que c'est son tour
+            if(ia.isSelected() && ((joueur[nbTour % 2]) == 1)){
+                System.out.println("tour de l'ia");
+                choix = 3;
+                btnValider.arm();
             }
-            //le joueur a rentré quelque chose
             else{
-                //on recupere le choix du joueur et le converti en int
-                try {
-                    choix = Integer.parseInt(reponse.getText());
-                    reponse.clear();
+                //on verifie que le joueur a rempli le textField
+                if(reponse.getText().isEmpty()){
+                    choix = 0;
                 }
-                catch(Exception _) {
+                //le joueur a rentré quelque chose
+                else{
+                    //on recupere le choix du joueur et le converti en int
+                    try {
+                        choix = Integer.parseInt(reponse.getText());
+                        reponse.clear();
+                    }
+                    catch(Exception _) {
+                    }
                 }
-            }
 
+            }
             //Verification du choix
             if(choix <= 0 || choix > MAX_RETRAIT){
-                lblFeedback.setText("Il faut choisir un nombre entre 1 et 3");
-                try {
-                    wait(500);
-                } catch (InterruptedException ex) {
-                    throw new RuntimeException(ex);
-                }
                 lblFeedback.setText("Il faut choisir un nombre entre 1 et 3");
             }
             else if(choix > taillePileActuelle){
@@ -175,7 +191,7 @@ public class GameApplication extends Application {
                 //on retire le nombre choisi
                 taillePileActuelle -= choix;
                 //affichage du choix
-                lblFeedback.setText("Le joueur "+ joueurs.get(Integer.toString(joueur[nbTour % 2])) +" enleve "+ choix +" allumettes");
+                lblFeedback.setText(joueurs.get(Integer.toString(joueur[nbTour % 2])) +" enleve "+ choix +" allumettes");
                 //on remet le choix à 0
                 choix = 0;
 
@@ -197,17 +213,17 @@ public class GameApplication extends Application {
                 nbTour ++;
 
                 //On affiche le numero du joueur qui doit jouer
-                inviteDeSaisie.setText("Joueur "+ joueurs.get(Integer.toString(joueur[nbTour % 2])) +" Combien d'allumette veux-tu enlever ?");
+                inviteDeSaisie.setText(joueurs.get(Integer.toString(joueur[nbTour % 2])) +", Combien d'allumette veux-tu enlever ?");
 
                 //Condition de victoire
                 if(taillePileActuelle == 1){
                     //On affiche le message de victoire avec le joueur
-                    lblFeedback.setText("Le joueur "+ joueurs.get(Integer.toString(joueur[(nbTour + 1) % 2])) +" gagne !");
+                    lblFeedback.setText(joueurs.get(Integer.toString(joueur[(nbTour + 1) % 2])) +" gagne !");
                     partieFinie = true;
                 }
                 if(taillePileActuelle == 0){
                     //On affiche le message de victoire avec le joueur
-                    lblFeedback.setText("Le joueur "+ joueurs.get(Integer.toString(joueur[nbTour % 2])) +" gagne !");
+                    lblFeedback.setText(joueurs.get(Integer.toString(joueur[nbTour % 2])) +" gagne !");
                     partieFinie = true;
                 }
                 //quand on rentre dans une des conditions de victoires
@@ -223,6 +239,7 @@ public class GameApplication extends Application {
 
                 }
             }
+
         });
 
         btnRejouer.setOnAction( e -> {
@@ -239,7 +256,7 @@ public class GameApplication extends Application {
             //on remet tout d'origine
             taillePileActuelle = 10;
             nbTour = 0;
-            inviteDeSaisie.setText("Nouvelle partie ! \nJoueur "+ joueurs.get(Integer.toString(joueur[nbTour % 2])) +" Combien d'allumette veux-tu enlever ?");
+            inviteDeSaisie.setText("Nouvelle partie ! \n"+ joueurs.get(Integer.toString(joueur[nbTour % 2])) +", Combien d'allumette veux-tu enlever ?");
             lblStatutPile.setText("| | | | | | | | | |");
             lblFeedback.setText("");
         });
