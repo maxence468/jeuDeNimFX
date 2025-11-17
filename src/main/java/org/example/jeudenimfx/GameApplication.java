@@ -12,6 +12,8 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
+
 import static javafx.geometry.Pos.*;
 
 
@@ -70,6 +72,7 @@ public class GameApplication extends Application {
         //image de l'icon
         Image icon = new Image("/nim.png");
 
+        //image sur l'application
         Image image = new Image("/image.png");
         ImageView imageView = new ImageView(image);
         imageView.setFitHeight(100);
@@ -90,7 +93,7 @@ public class GameApplication extends Application {
         //pour lancer une partie une fois qu'on a choisi les noms
         Button btnLancer = new Button("Lancer la partie");
 
-        //choix pour jouer avec un ia ou non
+        //choix pour jouer avec un "ia" ou non
         CheckBox ia = new CheckBox("IA ?");
         //layout horizontal avec le nom du joueur 2 et la checkbox pour l'ia
         HBox joueur2 = new HBox();
@@ -101,6 +104,7 @@ public class GameApplication extends Application {
         VBox layout = new VBox(8);
         //Ajout des composants dans la boite verticale
         layout.getChildren().addAll(retourNom, choixNom1, joueur2, btnLancer, imageView, inviteDeSaisie,lblFeedback,reponse,btnValider,lblStatutPile,btnRejouer);
+        //on cache les elements du jeu tant que les noms ne sont pas rentrés
         btnRejouer.setVisible(false);
         inviteDeSaisie.setVisible(false);
         reponse.setVisible(false);
@@ -127,7 +131,7 @@ public class GameApplication extends Application {
             if(choixNom1.getText().isEmpty()){
                 retourNom.setText("c'est mieux d'avoir un nom pour le joueur 1");
             }
-            else if(choixNom2.getText().isEmpty()){
+            else if(choixNom2.getText().isEmpty() && !ia.isSelected()){
                 retourNom.setText("c'est mieux d'avoir un nom pour le joueur 2");
             }
             //nom valide
@@ -147,7 +151,7 @@ public class GameApplication extends Application {
                 reponse.setVisible(true);
                 btnValider.setVisible(true);
 
-                //on enleve le choix du nom et le bouton
+                //on enleve le choix des noms et le bouton
                 layout.getChildren().removeAll(retourNom,choixNom1,joueur2, btnLancer);
 
                 //on met le texte de depart avec le nom du joueur 1
@@ -157,18 +161,23 @@ public class GameApplication extends Application {
 
         btnValider.setOnAction( e -> {
 
-            //on verifie que le joueur a rempli le textField
-            if(reponse.getText().isEmpty()){
-                choix = 0;
-            }
-            //le joueur a rentré quelque chose
-            else{
-                //on recupere le choix du joueur et le converti en int
-                try {
-                    choix = Integer.parseInt(reponse.getText());
-                    reponse.clear();
+            //si c'est le tour d'un humain
+            if(joueur[nbTour % 2] == 1 || ( joueur[nbTour % 2] == 2 && !ia.isSelected()) ){
+                //on verifie que le joueur a rempli le textField
+                if(reponse.getText().isEmpty()){
+                    choix = 0;
                 }
-                catch(Exception _) {
+                //le joueur a rentré quelque chose
+                else{
+                    //on recupere le choix du joueur et le converti en int
+                    try {
+                        choix = Integer.parseInt(reponse.getText());
+                        //on enleve la valeur dans la champs
+                        reponse.clear();
+                    }
+                    //si la reponse est autre chose que un entier
+                    catch(Exception _) {
+                    }
                 }
             }
 
@@ -232,6 +241,24 @@ public class GameApplication extends Application {
                     btnRejouer.setVisible(true);
 
                 }
+            }
+
+            //si c'est au tour de l'ia
+            if(joueur[nbTour % 2] == 2 && ia.isSelected()){
+                if(taillePileActuelle >= 5){
+                    choix = new Random().nextInt(1,4);
+                }
+                else if(taillePileActuelle == 4){
+                    choix = 3;
+                }
+                else if(taillePileActuelle == 3){
+                    choix = 2;
+                }
+                else if(taillePileActuelle == 2){
+                    choix = 1;
+                }
+
+                btnValider.fire();
             }
 
         });
