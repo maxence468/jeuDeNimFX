@@ -80,6 +80,7 @@ public class GameApplication extends Application {
 
         //retour utilisateur si le nom est mal rempli
         Label retourNom = new Label();
+        retourNom.setFont(font);
         //champs pour choisir le nom des joueurs
         TextField choixNom1 = new TextField();
         //largeur max
@@ -266,8 +267,10 @@ public class GameApplication extends Application {
                 else if(taillePileActuelle == 2){
                     choix = 1;
                 }
+                if(!partieFinie){
+                    btnValider.fire();
 
-                btnValider.fire();
+                }
             }
 
         });
