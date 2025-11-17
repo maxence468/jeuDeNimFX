@@ -126,26 +126,35 @@ public class GameApplication extends Application {
         //Affichage de la scene de theatre
         stage.show();
 
+        //quand on appuie pour selectionner l'ia
+        ia.setOnAction(e->{
+            if(ia.isSelected()){
+                //donne un nom prédefini qu'on peut pas modifier
+                choixNom2.clear();
+                choixNom2.setEditable(false);
+                choixNom2.insertText(0,"IA TROP FORTE");
+            }
+            else{
+                choixNom2.setEditable(true);
+                choixNom2.clear();
+            }
+
+        });
+
         btnLancer.setOnAction(e->{
             //on verifie si les champs sont remplis
             if(choixNom1.getText().isEmpty()){
                 retourNom.setText("c'est mieux d'avoir un nom pour le joueur 1");
             }
-            else if(choixNom2.getText().isEmpty() && !ia.isSelected()){
+            else if(choixNom2.getText().isEmpty()){
                 retourNom.setText("c'est mieux d'avoir un nom pour le joueur 2");
             }
             //nom valide
             else{
-                if(ia.isSelected()){
-                    joueurs.put("1", choixNom1.getText());
-                    //ia a un nom predefini
-                    joueurs.put("2", "IA TROP FORTE");
-                }
-                else{
-                    //on met le nom associé à son numero de joueur
-                    joueurs.put("1", choixNom1.getText());
-                    joueurs.put("2", choixNom2.getText());
-                }
+                //on met le nom associé à son numero de joueur
+                joueurs.put("1", choixNom1.getText());
+                joueurs.put("2", choixNom2.getText());
+
                 //on met visible la suite du jeu
                 inviteDeSaisie.setVisible(true);
                 reponse.setVisible(true);
