@@ -80,20 +80,22 @@ public class GameApplication extends Application {
         imageView.setFitHeight(200);
         imageView.setFitWidth(200);
 
+        //retour utilisateur si le nom est mal rempli
+        Label retourNom = new Label();
         //champs pour choisir le nom des joueurs
         TextField choixNom1 = new TextField();
         //on met un placeholder
         choixNom1.setPromptText("Nom du joueur 1");
         TextField choixNom2 = new TextField();
         choixNom2.setPromptText("Nom du joueur 2");
-
+        //pour lancer une partie une fois qu'on a choisi les noms
         Button btnLancer = new Button("Lancer la partie");
 
 
         //boite Colonne verticale avec 8 d'espace
         VBox layout = new VBox(8);
         //Ajout des composants dans la boite verticale
-        layout.getChildren().addAll(choixNom1, choixNom2, btnLancer, imageView, inviteDeSaisie,lblFeedback,reponse,btnValider,lblStatutPile,btnRejouer);
+        layout.getChildren().addAll(retourNom, choixNom1, choixNom2, btnLancer, imageView, inviteDeSaisie,lblFeedback,reponse,btnValider,lblStatutPile,btnRejouer);
         btnRejouer.setVisible(false);
         inviteDeSaisie.setVisible(false);
         reponse.setVisible(false);
@@ -116,20 +118,29 @@ public class GameApplication extends Application {
         stage.show();
 
         btnLancer.setOnAction(e->{
-            //on met le nom associé à son numero de joueur
-            joueurs.put("1", choixNom1.getText());
-            joueurs.put("2", choixNom2.getText());
-            //on met visible la suite du jeu
-            inviteDeSaisie.setVisible(true);
-            reponse.setVisible(true);
-            btnValider.setVisible(true);
-            //on enleve le choix du nom et le bouton
-            choixNom1.setVisible(false);
-            choixNom2.setVisible(false);
-            btnLancer.setVisible(false);
+            //on verifie si les champs sont remplis
+            if(choixNom1.getText().isEmpty()){
+                retourNom.setText("c'est mieux d'avoir un nom pour le joueur 1");
+            }
+            else if(choixNom2.getText().isEmpty()){
+                retourNom.setText("c'est mieux d'avoir un nom pour le joueur 2");
+            }
+            //nom valide 
+            else{
+                //on met le nom associé à son numero de joueur
+                joueurs.put("1", choixNom1.getText());
+                joueurs.put("2", choixNom2.getText());
+                //on met visible la suite du jeu
+                inviteDeSaisie.setVisible(true);
+                reponse.setVisible(true);
+                btnValider.setVisible(true);
 
-            //on met le texte de depart avec le nom du joueur 1
-            inviteDeSaisie.setText("Joueur "+ joueurs.get(Integer.toString(joueur[nbTour])) + " Combien d'allumette veux-tu enlever ?");
+                //on enleve le choix du nom et le bouton
+                layout.getChildren().removeAll(retourNom,choixNom1,choixNom2, btnLancer);
+
+                //on met le texte de depart avec le nom du joueur 1
+                inviteDeSaisie.setText("Joueur "+ joueurs.get(Integer.toString(joueur[nbTour])) + " Combien d'allumette veux-tu enlever ?");
+            }
         });
 
         btnValider.setOnAction( e -> {
