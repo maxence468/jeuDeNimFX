@@ -11,6 +11,11 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Map;
+
 import static javafx.geometry.Pos.*;
 
 
@@ -26,6 +31,12 @@ public class GameApplication extends Application {
     int choix;
     //tableau contenant les joueurs
     int[] joueur = {1,2};
+
+    //hashmap pour associer les noms avec les numeros des joueurs
+    Map<String, String> joueurs = new HashMap<String,String>();
+    String nom1;
+    String nom2;
+
     //nombre de tour dans le jeu
     int nbTour = 0;
     //nombre max de retrait par tour
@@ -39,7 +50,7 @@ public class GameApplication extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         //Affichage du tour
-        Label inviteDeSaisie = new Label("Joueur"+ joueur[nbTour] + " Combien d'allumette veux-tu enlever ?");
+        Label inviteDeSaisie = new Label();
         inviteDeSaisie.setFont(font);
 
         //Champ input
@@ -69,17 +80,30 @@ public class GameApplication extends Application {
         imageView.setFitHeight(200);
         imageView.setFitWidth(200);
 
+        //champs pour choisir le nom des joueurs
+        TextField choixNom1 = new TextField();
+        //on met un placeholder
+        choixNom1.setPromptText("Nom du joueur 1");
+        TextField choixNom2 = new TextField();
+        choixNom2.setPromptText("Nom du joueur 2");
+
+        Button btnLancer = new Button("Lancer la partie");
+
+
         //boite Colonne verticale avec 8 d'espace
         VBox layout = new VBox(8);
         //Ajout des composants dans la boite verticale
-        layout.getChildren().addAll(imageView, inviteDeSaisie,lblFeedback,reponse,btnValider,lblStatutPile,btnRejouer);
+        layout.getChildren().addAll(choixNom1, choixNom2, btnLancer, imageView, inviteDeSaisie,lblFeedback,reponse,btnValider,lblStatutPile,btnRejouer);
         btnRejouer.setVisible(false);
+        inviteDeSaisie.setVisible(false);
+        reponse.setVisible(false);
+        btnValider.setVisible(false);
 
         //alignement de tous les elements au centre
         layout.setAlignment(CENTER);
 
         // 2. Création de la Scene (attachement du nœud racine + dimensions)
-        Scene scene = new Scene(layout, 600, 600);
+        Scene scene = new Scene(layout, 800, 600);
 
 
         // 3. Attachement de la Scene au Stage
@@ -91,7 +115,25 @@ public class GameApplication extends Application {
         //Affichage de la scene de theatre
         stage.show();
 
+        btnLancer.setOnAction(e->{
+            //on met le nom associé à son numero de joueur
+            joueurs.put("1", choixNom1.getText());
+            joueurs.put("2", choixNom2.getText());
+            //on met visible la suite du jeu
+            inviteDeSaisie.setVisible(true);
+            reponse.setVisible(true);
+            btnValider.setVisible(true);
+            //on enleve le choix du nom et le bouton
+            choixNom1.setVisible(false);
+            choixNom2.setVisible(false);
+            btnLancer.setVisible(false);
+
+            //on met le texte de depart avec le nom du joueur 1
+            inviteDeSaisie.setText("Joueur "+ joueurs.get(Integer.toString(joueur[nbTour])) + " Combien d'allumette veux-tu enlever ?");
+        });
+
         btnValider.setOnAction( e -> {
+
             //on verifie que le joueur a rempli le textField
             if(reponse.getText().isEmpty()){
                 choix = 0;
@@ -104,7 +146,6 @@ public class GameApplication extends Application {
                     reponse.clear();
                 }
                 catch(Exception _) {
-
                 }
             }
 
@@ -126,7 +167,7 @@ public class GameApplication extends Application {
                 //on retire le nombre choisi
                 taillePileActuelle -= choix;
                 //affichage du choix
-                lblFeedback.setText("Le joueur "+ joueur[nbTour % 2] +" enleve "+ choix +" allumettes");
+                lblFeedback.setText("Le joueur "+ joueurs.get(Integer.toString(joueur[nbTour % 2])) +" enleve "+ choix +" allumettes");
                 //on remet le choix à 0
                 choix = 0;
 
@@ -148,17 +189,17 @@ public class GameApplication extends Application {
                 nbTour ++;
 
                 //On affiche le numero du joueur qui doit jouer
-                inviteDeSaisie.setText("Joueur "+ joueur[nbTour % 2] +" Combien d'allumette veux-tu enlever ?");
+                inviteDeSaisie.setText("Joueur "+ joueurs.get(Integer.toString(joueur[nbTour % 2])) +" Combien d'allumette veux-tu enlever ?");
 
                 //Condition de victoire
                 if(taillePileActuelle == 1){
                     //On affiche le message de victoire avec le joueur
-                    lblFeedback.setText("Le joueur "+ joueur[(nbTour + 1) % 2] +" gagne !");
+                    lblFeedback.setText("Le joueur "+ joueurs.get(Integer.toString(joueur[(nbTour + 1) % 2])) +" gagne !");
                     partieFinie = true;
                 }
                 if(taillePileActuelle == 0){
                     //On affiche le message de victoire avec le joueur
-                    lblFeedback.setText("Le joueur "+ joueur[(nbTour) % 2] +" gagne !");
+                    lblFeedback.setText("Le joueur "+ joueurs.get(Integer.toString(joueur[nbTour % 2])) +" gagne !");
                     partieFinie = true;
                 }
                 //quand on rentre dans une des conditions de victoires
@@ -190,7 +231,7 @@ public class GameApplication extends Application {
             //on remet tout d'origine
             taillePileActuelle = 10;
             nbTour = 0;
-            inviteDeSaisie.setText("Nouvelle partie ! \nJoueur "+ joueur[nbTour % 2] +" Combien d'allumette veux-tu enlever ?");
+            inviteDeSaisie.setText("Nouvelle partie ! \nJoueur "+ joueurs.get(Integer.toString(joueur[nbTour % 2])) +" Combien d'allumette veux-tu enlever ?");
             lblStatutPile.setText("| | | | | | | | | |");
             lblFeedback.setText("");
         });
