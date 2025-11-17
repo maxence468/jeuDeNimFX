@@ -11,10 +11,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-
-import java.io.File;
-import java.util.concurrent.TimeUnit;
-
 import static javafx.geometry.Pos.*;
 
 
@@ -29,7 +25,7 @@ public class GameApplication extends Application {
     //choix du joueur
     int choix;
     //tableau contenant les joueurs
-    int joueur[] = {1,2};
+    int[] joueur = {1,2};
     //nombre de tour dans le jeu
     int nbTour = 0;
     //nombre max de retrait par tour
@@ -165,6 +161,7 @@ public class GameApplication extends Application {
                     lblFeedback.setText("Le joueur "+ joueur[(nbTour) % 2] +" gagne !");
                     partieFinie = true;
                 }
+                //quand on rentre dans une des conditions de victoires
                 if(partieFinie){
                     //affichage du message de fin de partie
                     inviteDeSaisie.setText("FIN DE LA PARTIE !");
