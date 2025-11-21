@@ -4,9 +4,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Random;
 
 import static javafx.geometry.Pos.*;
+import static javafx.scene.layout.BorderStroke.THICK;
 
 
 public class GameApplication extends Application {
@@ -94,6 +95,16 @@ public class GameApplication extends Application {
         //pour lancer une partie une fois qu'on a choisi les noms
         Button btnLancer = new Button("Lancer la partie");
 
+        //creation d'un fond réutilisable
+        //remplissage en bleu
+        BackgroundFill fill = new BackgroundFill(Color.STEELBLUE, null,null);
+        //on crée un fond avec le remplissage "fill" (bleu)
+        Background fond = new Background(fill);
+        //on met le fond sur le bouton
+        btnLancer.setBackground(fond);
+
+
+
         //choix pour jouer avec un "ia" ou non
         CheckBox ia = new CheckBox("IA ?");
         //layout horizontal avec le nom du joueur 2 et la checkbox pour l'ia
@@ -133,7 +144,7 @@ public class GameApplication extends Application {
                 //donne un nom prédefini qu'on peut pas modifier
                 choixNom2.clear();
                 choixNom2.setEditable(false);
-                choixNom2.insertText(0,"IA TROP FORTE");
+                choixNom2.insertText(0,"IA 🤖");
             }
             else{
                 choixNom2.setEditable(true);
@@ -212,6 +223,7 @@ public class GameApplication extends Application {
                 //affichage du nombre d'allumette
                 //on remet la chaine de caractere vide
                 allumetteString = "";
+
                 //on ajoute le nombre d'allumette dans la chaine
                 for(int i = 0; i < taillePileActuelle; i++ ){
                     allumetteString += "| ";
@@ -253,7 +265,7 @@ public class GameApplication extends Application {
                 }
             }
 
-            //si c'est au tour de l'ia
+            //si c'est au tour de l'ia on prepare son choix pour le tour d'après
             if(joueur[nbTour % 2] == 2 && ia.isSelected()){
                 if(taillePileActuelle >= 5){
                     choix = new Random().nextInt(1,4);
@@ -269,7 +281,6 @@ public class GameApplication extends Application {
                 }
                 if(!partieFinie){
                     btnValider.fire();
-
                 }
             }
 
