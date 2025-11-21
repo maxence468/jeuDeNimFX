@@ -6,26 +6,27 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-
 import static javafx.geometry.Pos.*;
-import static javafx.scene.layout.BorderStroke.THICK;
+
 
 
 public class GameApplication extends Application {
-    //declaration variable
+    //declaration d'attribut
     //nombre d'allumette initial
     int PILE_INITIALE  = 10;
     //taille de la pille pour chaque tour
     int taillePileActuelle = PILE_INITIALE;
-    //declaration d'une variable String pour l'affichage
-    String allumetteString = "";
+
+    String I = "|";
+    ArrayList<String> arrayAllumettes = new ArrayList<String>();
+
     //choix du joueur
     int choix;
     //tableau contenant les joueurs
@@ -43,7 +44,6 @@ public class GameApplication extends Application {
     //recuperer une police personalisée
     Font font = Font.loadFont(getClass().getResourceAsStream("/Monocraft.ttf"), 17);
 
-
     @Override
     public void start(Stage stage) throws Exception {
         //Affichage du tour
@@ -54,11 +54,21 @@ public class GameApplication extends Application {
         TextField reponse = new TextField();
         reponse.setMaxWidth(100);
 
+        //creation d'un fond réutilisable
+        //remplissage en bleu
+        BackgroundFill fill = new BackgroundFill(Color.STEELBLUE, null,null);
+        //on crée un fond avec le remplissage "fill" (bleu)
+        Background fond = new Background(fill);
         //boutton validation de la saisie
         Button btnValider = new Button("retirer");
+        btnValider.setBackground(fond);
 
-        //Affichage des allumettes restantes
-        Label lblStatutPile  = new Label("| | | | | | | | | |");
+        //on met le nombre d'allumette de base dans le tableau de String
+        for(int i = 0; i < taillePileActuelle; i++ ){
+            arrayAllumettes.add(I);
+        }
+        //Affichage des allumettes restantes transormation Array en String
+        Label lblStatutPile  = new Label(String.join("  ", arrayAllumettes));
         lblStatutPile.setFont(Font.font("Stencil",  FontWeight.BOLD, 40 ));
         lblStatutPile.setTextFill(Color.BROWN);
 
@@ -94,12 +104,6 @@ public class GameApplication extends Application {
         choixNom2.setPromptText("Nom du joueur 2");
         //pour lancer une partie une fois qu'on a choisi les noms
         Button btnLancer = new Button("Lancer la partie");
-
-        //creation d'un fond réutilisable
-        //remplissage en bleu
-        BackgroundFill fill = new BackgroundFill(Color.STEELBLUE, null,null);
-        //on crée un fond avec le remplissage "fill" (bleu)
-        Background fond = new Background(fill);
         //on met le fond sur le bouton
         btnLancer.setBackground(fond);
 
@@ -201,6 +205,17 @@ public class GameApplication extends Application {
                     }
                 }
             }
+            else{
+                System.out.println("1");
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+                System.out.println("2");
+            }
+
+
 
             //Verification du choix
             if(choix <= 0 || choix > MAX_RETRAIT){
@@ -215,21 +230,19 @@ public class GameApplication extends Application {
                 taillePileActuelle -= choix;
                 //affichage du choix
                 lblFeedback.setText(joueurs.get(Integer.toString(joueur[nbTour % 2])) +" enleve "+ choix +" allumettes");
-                //on remet le choix à 0
-                choix = 0;
-
 
 
                 //affichage du nombre d'allumette
-                //on remet la chaine de caractere vide
-                allumetteString = "";
-
-                //on ajoute le nombre d'allumette dans la chaine
-                for(int i = 0; i < taillePileActuelle; i++ ){
-                    allumetteString += "| ";
+                //on enleve le nombre d'allumette dans la chaine
+                for(int i = 0; i < choix; i++ ){
+                    arrayAllumettes.removeFirst();
                 }
+
+                //on remet le choix à 0
+                choix = 0;
                 //on met le texte dans le label
-                lblStatutPile.setText(allumetteString);
+                lblStatutPile.setText(String.join("  ", arrayAllumettes));
+
 
                 //on vide le champ de reponse
                 reponse.setText("");
@@ -261,7 +274,6 @@ public class GameApplication extends Application {
                     lblStatutPile.setVisible(false);
                     //on ajoute le bouton pour rejouer
                     btnRejouer.setVisible(true);
-
                 }
             }
 
@@ -298,10 +310,20 @@ public class GameApplication extends Application {
             btnRejouer.setVisible(false);
 
             //on remet tout d'origine
-            taillePileActuelle = 10;
+            taillePileActuelle = PILE_INITIALE;
             nbTour = 0;
             inviteDeSaisie.setText("Nouvelle partie ! \n"+ joueurs.get(Integer.toString(joueur[nbTour % 2])) +", Combien d'allumette veux-tu enlever ?");
-            lblStatutPile.setText("| | | | | | | | | |");
+
+            //on vide la liste
+            if(!arrayAllumettes.isEmpty()){
+                arrayAllumettes.removeFirst();
+            }
+            //on la remet au nombre de la pile
+            for(int i = 0; i < taillePileActuelle; i++ ){
+                arrayAllumettes.add(I);
+            }
+            //pn remet le texte du statut de la pile
+            lblStatutPile.setText(String.join("  ", arrayAllumettes));
             lblFeedback.setText("");
         });
     }
